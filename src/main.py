@@ -46,6 +46,9 @@ def main() -> None:
     session.headers.update({"User-Agent": "polymarket-insider-bot/1.0"})
     gamma_cache: dict = {}
 
+    # Heartbeat quotidien (08:00-08:30 UTC)
+    alerter.send_heartbeat(cfg, session)
+
     # 3. Fetch des trades récents
     trades = fetcher.fetch_recent_trades(session, cfg.lookback_minutes)
     logging.info(f"[FETCH] {len(trades)} trades dans les {cfg.lookback_minutes} dernieres minutes")
@@ -72,6 +75,8 @@ def main() -> None:
         if profile is None:
             logging.warning(f"[FETCH] wallet {wallet_address[:8]}... historique indisponible, ignore")
             continue
+        if filters.is_blacklisted(wallet_address, cfg):
+            continue
         if filters.is_arb_bot(profile, cfg):
             continue
         wallet_profiles[wallet_address] = profile
@@ -85,6 +90,8 @@ def main() -> None:
         market = fetcher.fetch_market_metadata(trade.condition_id, session, gamma_cache)
         if market is None:
             logging.warning(f"[FETCH] marche {trade.condition_id[:8]}... metadonnees indisponibles, ignore")
+            continue
+        if filters.is_noise_market(market, cfg):
             continue
         scored = scorer.score_trade(trade, wallet, market, cfg)
         logging.info(f"[SCORE] {trade.proxy_wallet[:8]}... score {scored.signals.score}/100 [{_active_signals_str(scored)}]")

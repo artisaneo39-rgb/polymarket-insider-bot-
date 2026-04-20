@@ -1,6 +1,7 @@
 # src/alerter.py
 import logging
 import requests
+from datetime import datetime, timezone
 from src.models import ScoredTrade
 from src.config import Settings
 
@@ -116,6 +117,26 @@ def format_message(scored_trade: ScoredTrade) -> str:
     )
 
     return message
+
+
+def send_heartbeat(cfg: Settings, session: requests.Session) -> bool:
+    """
+    Envoie un message de statut quotidien entre 08:00 et 08:30 UTC.
+    Retourne True si envoi, False si hors fenêtre horaire.
+    """
+    now = datetime.now(timezone.utc)
+    if now.hour == 8 and now.minute < 30:
+        text = (
+            f"Bot actif — {now.strftime('%Y-%m-%d %H:%M')} UTC\n"
+            f"Seuil: {cfg.alert_score_threshold}/100 | "
+            f"Fenetre: {cfg.lookback_minutes}min | "
+            f"Min bet: {cfg.min_bet_usdc:.0f} USDC"
+        )
+        success = _post_telegram(cfg.telegram_bot_token, cfg.telegram_chat_id, text, session)
+        if success:
+            logging.info("[HEARTBEAT] Message de statut quotidien envoye")
+        return success
+    return False
 
 
 def _post_telegram(token: str, chat_id: str, text: str, session: requests.Session) -> bool:

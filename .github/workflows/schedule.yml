@@ -29,6 +29,7 @@ jobs:
       BOT_MARKET_COUNT_MAX: ${{ vars.BOT_MARKET_COUNT_MAX || '50' }}
       LOOKBACK_MINUTES: ${{ vars.LOOKBACK_MINUTES || '30' }}
       POLYGON_RPC_URL: ${{ vars.POLYGON_RPC_URL || 'https://1rpc.io/matic' }}
+      WALLET_BLACKLIST: ${{ vars.WALLET_BLACKLIST || '' }}
 
     steps:
       - name: Checkout repository

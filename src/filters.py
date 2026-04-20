@@ -1,7 +1,61 @@
 import logging
 from collections import defaultdict
+from datetime import datetime, timezone
 from src.models import Trade, WalletProfile
 from src.config import Settings
+
+
+SPORTS_KEYWORDS = [
+    "football", "soccer", "nba", "nfl", "nhl", "mlb", "tennis", "cricket",
+    "ufc", "boxing", "mma", "f1", "formula 1", "golf", "hockey", "rugby",
+    "baseball", "basketball", "olympics", "premier league", "champions league",
+    "world cup", "superbowl", "super bowl", "wimbledon", "tour de france",
+]
+
+
+def is_noise_market(market, cfg=None) -> bool:
+    """
+    Retourne True si le marché doit être exclu du scoring.
+    Critères :
+    - Marché sportif (question contient un mot-clé sport)
+    - Résolution > 180 jours dans le futur
+    """
+    question_lower = (market.question or "").lower()
+
+    # Filtre sportif
+    for keyword in SPORTS_KEYWORDS:
+        if keyword in question_lower:
+            logging.info(f"[FILTER] marche '{market.question[:40]}...' exclu: sport ({keyword})")
+            return True
+
+    # Filtre résolution trop lointaine
+    if market.end_date_iso:
+        try:
+            end_dt = datetime.fromisoformat(market.end_date_iso.replace("Z", "+00:00"))
+            if end_dt.tzinfo is None:
+                end_dt = end_dt.replace(tzinfo=timezone.utc)
+            days_until = (end_dt - datetime.now(timezone.utc)).days
+            if days_until > 180:
+                logging.info(f"[FILTER] marche '{market.question[:40]}...' exclu: resolution trop lointaine ({days_until}j)")
+                return True
+        except (ValueError, TypeError):
+            pass
+
+    return False
+
+
+def is_blacklisted(wallet_address: str, cfg) -> bool:
+    """
+    Retourne True si le wallet est dans la blacklist configurée.
+    La blacklist est une string d'adresses séparées par des virgules dans WALLET_BLACKLIST.
+    """
+    if not cfg.wallet_blacklist:
+        return False
+    blacklist = [addr.strip().lower() for addr in cfg.wallet_blacklist.split(",") if addr.strip()]
+    if wallet_address.lower() in blacklist:
+        logging.info(f"[FILTER] wallet {wallet_address[:8]}... exclu: blacklist")
+        return True
+    return False
 
 
 def apply_trade_filters(trades: list, cfg: Settings) -> list:

@@ -27,6 +27,7 @@ class Settings(BaseSettings):
 
     # Filtres anti-bruit
     bot_market_count_max: int = Field(default=50, gt=0)
+    wallet_blacklist: str = Field(default="", description="Adresses wallet à ignorer, séparées par des virgules")
 
     # Paramètres de run
     lookback_minutes: int = Field(default=30, gt=0)
