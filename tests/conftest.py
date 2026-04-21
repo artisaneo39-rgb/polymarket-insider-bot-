@@ -9,6 +9,7 @@ def cfg():
     return Settings(
         telegram_bot_token="test_token",
         telegram_chat_id="123456",
+        min_bet_usdc=500.0,  # valeur fixe pour les tests, indépendante du défaut prod
     )
 
 
