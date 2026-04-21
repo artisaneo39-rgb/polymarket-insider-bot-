@@ -12,23 +12,68 @@ SPORTS_KEYWORDS = [
     "world cup", "superbowl", "super bowl", "wimbledon", "tour de france",
 ]
 
+# Mots-clés qui signalent un marché de pure spéculation (jamais d'insider)
+NOISE_KEYWORDS = [
+    # Entertainment / pop culture
+    "gta", "grand theft auto", "game", "video game", "movie", "film", "album",
+    "song", "music", "artist", "actor", "actress", "celebrity", "oscar", "grammy",
+    "emmy", "netflix", "disney", "marvel", "dc comics", "anime", "series", "season",
+    "episode", "trailer", "release date", "launch date",
+    # Geopolitique floue / pas d'insider possible
+    "ceasefire", "peace deal", "peace treaty", "war end", "conflict end",
+    "russia", "ukraine", "israel", "gaza", "taiwan", "north korea",
+    # Memes / réseaux sociaux
+    "elon", "tweet", "meme", "viral", "tiktok", "instagram", "followers",
+    "subscribers", "views",
+    # Divers non-financier
+    "weather", "earthquake", "hurricane", "disaster", "alien", "ufo",
+]
+
+# Catégories de marchés où l'insider trading est plausible
+VALID_MARKET_KEYWORDS = [
+    # Crypto / finance
+    "bitcoin", "btc", "ethereum", "eth", "crypto", "price", "ath", "etf",
+    "fed", "interest rate", "inflation", "gdp", "recession", "s&p", "nasdaq",
+    "stock", "ipo", "earnings", "merger", "acquisition",
+    # Politique électorale (info asymétrique possible)
+    "election", "president", "senate", "congress", "vote", "poll", "primary",
+    "win", "candidate", "approval",
+    # Régulation / juridique
+    "sec", "regulation", "lawsuit", "court", "ruling", "ban", "approve",
+    "legislation", "bill", "act",
+]
+
 
 def is_noise_market(market, cfg=None) -> bool:
     """
     Retourne True si le marché doit être exclu du scoring.
     Critères :
-    - Marché sportif (question contient un mot-clé sport)
-    - Résolution > 180 jours dans le futur
+    1. Contient un mot-clé sport
+    2. Contient un mot-clé "noise" (entertainment, géopolitique floue, memes)
+    3. N'appartient à AUCUNE catégorie valide (whitelist)
+    4. Résolution > 180 jours dans le futur
     """
     question_lower = (market.question or "").lower()
 
-    # Filtre sportif
+    # Filtre 1 : mots-clés sportifs
     for keyword in SPORTS_KEYWORDS:
         if keyword in question_lower:
-            logging.info(f"[FILTER] marche '{market.question[:40]}...' exclu: sport ({keyword})")
+            logging.info(f"[FILTER] marche exclu: sport ({keyword}) — '{market.question[:50]}'")
             return True
 
-    # Filtre résolution trop lointaine
+    # Filtre 2 : mots-clés noise explicites
+    for keyword in NOISE_KEYWORDS:
+        if keyword in question_lower:
+            logging.info(f"[FILTER] marche exclu: noise ({keyword}) — '{market.question[:50]}'")
+            return True
+
+    # Filtre 3 : whitelist — si aucun mot-clé valide, exclure
+    has_valid_keyword = any(keyword in question_lower for keyword in VALID_MARKET_KEYWORDS)
+    if not has_valid_keyword:
+        logging.info(f"[FILTER] marche exclu: hors whitelist — '{market.question[:50]}'")
+        return True
+
+    # Filtre 4 : résolution trop lointaine
     if market.end_date_iso:
         try:
             end_dt = datetime.fromisoformat(market.end_date_iso.replace("Z", "+00:00"))
@@ -36,7 +81,7 @@ def is_noise_market(market, cfg=None) -> bool:
                 end_dt = end_dt.replace(tzinfo=timezone.utc)
             days_until = (end_dt - datetime.now(timezone.utc)).days
             if days_until > 180:
-                logging.info(f"[FILTER] marche '{market.question[:40]}...' exclu: resolution trop lointaine ({days_until}j)")
+                logging.info(f"[FILTER] marche exclu: resolution trop lointaine ({days_until}j) — '{market.question[:50]}'")
                 return True
         except (ValueError, TypeError):
             pass

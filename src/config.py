@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     telegram_chat_id: str
 
     # Seuils d'alerte
-    alert_score_threshold: int = Field(default=60, ge=0, le=100)
+    alert_score_threshold: int = Field(default=75, ge=0, le=100)
     min_bet_usdc: float = Field(default=500.0, gt=0)
 
     # Paramètres des signaux
