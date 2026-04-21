@@ -1,15 +1,37 @@
 import pytest
 from datetime import datetime, timezone, timedelta
+from pydantic_settings import PydanticBaseSettingsSource
 from src.models import Trade, WalletProfile, MarketMetadata
 from src.config import Settings
 
 
+class _TestSettings(Settings):
+    """Variante de Settings qui ignore les variables d'environnement.
+
+    En CI (GitHub Actions), les env vars comme MIN_BET_USDC=5000 ont une
+    priorité plus haute que les kwargs du constructeur dans pydantic-settings.
+    Cette sous-classe n'utilise que les valeurs passées en argument, ce qui
+    rend les tests indépendants de l'environnement d'exécution.
+    """
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls,
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ):
+        return (init_settings,)  # init kwargs uniquement, pas d'env vars
+
+
 @pytest.fixture
 def cfg():
-    return Settings(
+    return _TestSettings(
         telegram_bot_token="test_token",
         telegram_chat_id="123456",
-        min_bet_usdc=500.0,  # valeur fixe pour les tests, indépendante du défaut prod
+        min_bet_usdc=500.0,
     )
 
 
