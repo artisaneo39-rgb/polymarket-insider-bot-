@@ -35,8 +35,8 @@ class Settings(BaseSettings):
     polygon_rpc_url: str = Field(default="https://1rpc.io/matic")
 
     # PnL Tracker (optionnel — désactivé si non configuré)
-    github_gist_id: str = Field(default="", description="ID du Gist GitHub pour le PnL tracker")
-    github_gist_token: str = Field(default="", description="GitHub Personal Access Token (scope: gist)")
+    gist_id: str = Field(default="", description="ID du Gist GitHub pour le PnL tracker")
+    gist_token: str = Field(default="", description="GitHub Personal Access Token (scope: gist)")
 
 
 def get_settings() -> Settings:

@@ -47,9 +47,9 @@ def main() -> None:
     session.headers.update({"User-Agent": "polymarket-insider-bot/1.0"})
     gamma_cache: dict = {}
 
-    # Charger le tracker PnL (optionnel — ignoré si GITHUB_GIST_ID non configuré)
-    tracker_data = pnl_tracker.load_tracker(cfg.github_gist_id, cfg.github_gist_token, session)
-    if tracker_data is not None and cfg.github_gist_id:
+    # Charger le tracker PnL (optionnel — ignoré si GIST_ID non configuré)
+    tracker_data = pnl_tracker.load_tracker(cfg.gist_id, cfg.gist_token, session)
+    if tracker_data is not None and cfg.gist_id:
         tracker_data = pnl_tracker.check_resolutions(tracker_data, session)
         summary = pnl_tracker.compute_summary(tracker_data)
         logging.info(f"[TRACKER] {summary['nb_alerts']} alertes | {summary['nb_resolved']} resolues | win rate: {summary['win_rate_pct']}% | PnL simule: {summary['total_pnl_usdc']:+.0f} USDC")
@@ -112,14 +112,14 @@ def main() -> None:
             success = alerter.send_alert(st, cfg, session)
             if success:
                 alerts_sent += 1
-            if success and cfg.github_gist_id:
+            if success and cfg.gist_id:
                 tracker_data = pnl_tracker.record_alert(tracker_data, st)
 
     logging.info(f"[ALERT] {alerts_sent} alerte(s) envoyee(s) (seuil: {cfg.alert_score_threshold})")
 
     # Sauvegarder le tracker si modifié
-    if cfg.github_gist_id and tracker_data:
-        pnl_tracker.save_tracker(tracker_data, cfg.github_gist_id, cfg.github_gist_token, session)
+    if cfg.gist_id and tracker_data:
+        pnl_tracker.save_tracker(tracker_data, cfg.gist_id, cfg.gist_token, session)
 
     logging.info(f"[RUN END] duree: {time.time() - run_start:.1f}s")
 
