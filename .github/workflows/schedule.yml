@@ -30,6 +30,8 @@ jobs:
       LOOKBACK_MINUTES: ${{ vars.LOOKBACK_MINUTES || '30' }}
       POLYGON_RPC_URL: ${{ vars.POLYGON_RPC_URL || 'https://1rpc.io/matic' }}
       WALLET_BLACKLIST: ${{ vars.WALLET_BLACKLIST || '' }}
+      GITHUB_GIST_ID: ${{ secrets.GITHUB_GIST_ID }}
+      GITHUB_GIST_TOKEN: ${{ secrets.GITHUB_GIST_TOKEN }}
 
     steps:
       - name: Checkout repository
