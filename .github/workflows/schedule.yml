@@ -19,7 +19,7 @@ jobs:
 
       # Seuils — GitHub Variables avec valeurs par défaut
       ALERT_SCORE_THRESHOLD: ${{ vars.ALERT_SCORE_THRESHOLD || '75' }}
-      MIN_BET_USDC: ${{ vars.MIN_BET_USDC || '500' }}
+      MIN_BET_USDC: ${{ vars.MIN_BET_USDC || '5000' }}
       WALLET_AGE_DAYS_MAX: ${{ vars.WALLET_AGE_DAYS_MAX || '7' }}
       WALLET_TX_MIN: ${{ vars.WALLET_TX_MIN || '10' }}
       ORDER_BOOK_IMPACT_PCT: ${{ vars.ORDER_BOOK_IMPACT_PCT || '2' }}

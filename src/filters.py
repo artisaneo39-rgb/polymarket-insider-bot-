@@ -19,9 +19,8 @@ NOISE_KEYWORDS = [
     "song", "music", "artist", "actor", "actress", "celebrity", "oscar", "grammy",
     "emmy", "netflix", "disney", "marvel", "dc comics", "anime", "series", "season",
     "episode", "trailer", "release date", "launch date",
-    # Geopolitique floue / pas d'insider possible
-    "ceasefire", "peace deal", "peace treaty", "war end", "conflict end",
-    "russia", "ukraine", "israel", "gaza", "taiwan", "north korea",
+    # Geopolitique mélangée avec pop culture (combinaisons absurdes)
+    "before gta", "before iphone", "before ps6", "before xbox",
     # Memes / réseaux sociaux
     "elon", "tweet", "meme", "viral", "tiktok", "instagram", "followers",
     "subscribers", "views",
@@ -41,6 +40,9 @@ VALID_MARKET_KEYWORDS = [
     # Régulation / juridique
     "sec", "regulation", "lawsuit", "court", "ruling", "ban", "approve",
     "legislation", "bill", "act",
+    # Géopolitique (insiders possibles : diplomates, journalistes, think tanks)
+    "russia", "ukraine", "israel", "gaza", "taiwan", "north korea", "china",
+    "ceasefire", "peace deal", "war", "sanctions", "nato", "g7", "g20",
 ]
 
 

@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     # Seuils d'alerte
     alert_score_threshold: int = Field(default=75, ge=0, le=100)
-    min_bet_usdc: float = Field(default=500.0, gt=0)
+    min_bet_usdc: float = Field(default=5000.0, gt=0)
 
     # Paramètres des signaux
     wallet_age_days_max: int = Field(default=7, gt=0)
