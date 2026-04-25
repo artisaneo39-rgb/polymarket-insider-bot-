@@ -121,11 +121,11 @@ def format_message(scored_trade: ScoredTrade) -> str:
 
 def send_heartbeat(cfg: Settings, session: requests.Session) -> bool:
     """
-    Envoie un message de statut quotidien entre 08:00 et 08:30 UTC.
+    Envoie un message de statut quotidien entre 08:00 et 08:59 UTC.
     Retourne True si envoi, False si hors fenêtre horaire.
     """
     now = datetime.now(timezone.utc)
-    if now.hour == 8 and now.minute < 30:
+    if now.hour == 8:
         text = (
             f"Bot actif — {now.strftime('%Y-%m-%d %H:%M')} UTC\n"
             f"Seuil: {cfg.alert_score_threshold}/100 | "
