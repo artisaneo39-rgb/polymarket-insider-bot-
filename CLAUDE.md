@@ -1,7 +1,7 @@
 # CLAUDE.md — Polymarket Insider Bot
 
-**Statut actuel : MVP TERMINE — En attente de deploiement GitHub Actions**
-**Derniere mise a jour :** 2026-04-15 (Story 4.2 DONE — GitHub Actions workflow cree, MVP complet)
+**Statut actuel : EN PRODUCTION — Recalibrage filtres 2026-05-10**
+**Derniere mise a jour :** 2026-05-10 (fix filtres : BOT_MARKET_COUNT_MAX 50→200, suppression whitelist marches)
 
 ---
 
@@ -15,6 +15,7 @@
 | Stories (TEA) | DONE | `STORIES.md` |
 | Sprint 1 | DONE | voir section ci-dessous |
 | Sprint 2 (GitHub Actions) | DONE | `.github/workflows/schedule.yml` |
+| Recalibrage filtres | DONE | session 2026-05-10 |
 
 ---
 
