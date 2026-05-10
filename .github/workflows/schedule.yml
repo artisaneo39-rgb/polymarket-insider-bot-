@@ -26,7 +26,7 @@ jobs:
       BET_VS_HISTORY_MULTIPLIER: ${{ vars.BET_VS_HISTORY_MULTIPLIER || '3' }}
       CONCENTRATION_PCT: ${{ vars.CONCENTRATION_PCT || '60' }}
       TIMING_HOURS_BEFORE: ${{ vars.TIMING_HOURS_BEFORE || '4' }}
-      BOT_MARKET_COUNT_MAX: ${{ vars.BOT_MARKET_COUNT_MAX || '50' }}
+      BOT_MARKET_COUNT_MAX: ${{ vars.BOT_MARKET_COUNT_MAX || '200' }}
       LOOKBACK_MINUTES: ${{ vars.LOOKBACK_MINUTES || '30' }}
       POLYGON_RPC_URL: ${{ vars.POLYGON_RPC_URL || 'https://1rpc.io/matic' }}
       WALLET_BLACKLIST: ${{ vars.WALLET_BLACKLIST || '' }}

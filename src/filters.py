@@ -51,9 +51,10 @@ def is_noise_market(market, cfg=None) -> bool:
     Retourne True si le marché doit être exclu du scoring.
     Critères :
     1. Contient un mot-clé sport
-    2. Contient un mot-clé "noise" (entertainment, géopolitique floue, memes)
-    3. N'appartient à AUCUNE catégorie valide (whitelist)
-    4. Résolution > 180 jours dans le futur
+    2. Contient un mot-clé "noise" (entertainment, memes)
+    3. Résolution > 180 jours dans le futur
+    Note : la whitelist a été remplacée par une pure blacklist pour ne pas
+    exclure des marchés légitimes au phrasing inhabituel.
     """
     question_lower = (market.question or "").lower()
 
@@ -69,13 +70,7 @@ def is_noise_market(market, cfg=None) -> bool:
             logging.info(f"[FILTER] marche exclu: noise ({keyword}) — '{market.question[:50]}'")
             return True
 
-    # Filtre 3 : whitelist — si aucun mot-clé valide, exclure
-    has_valid_keyword = any(keyword in question_lower for keyword in VALID_MARKET_KEYWORDS)
-    if not has_valid_keyword:
-        logging.info(f"[FILTER] marche exclu: hors whitelist — '{market.question[:50]}'")
-        return True
-
-    # Filtre 4 : résolution trop lointaine
+    # Filtre 3 : résolution trop lointaine
     if market.end_date_iso:
         try:
             end_dt = datetime.fromisoformat(market.end_date_iso.replace("Z", "+00:00"))
