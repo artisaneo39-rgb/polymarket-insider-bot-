@@ -150,13 +150,13 @@ def _get_polygon_tx_count(wallet_address: str, session: requests.Session,
 def _post_rpc(url: str, payload: dict, session: requests.Session) -> object:
     """
     POST JSON-RPC (pour Polygon RPC).
-    Timeout 5s, retry 3x, délais [2s, 4s, 8s].
+    Timeout 3s, retry 1x, délai 2s.
     Retourne None si timeout ou erreur réseau.
     """
-    delays = [2, 4, 8]
+    delays = [2]
     for i, delay in enumerate(delays):
         try:
-            r = session.post(url, json=payload, timeout=5)
+            r = session.post(url, json=payload, timeout=3)
             r.raise_for_status()
             return r.json()
         except requests.RequestException as e:

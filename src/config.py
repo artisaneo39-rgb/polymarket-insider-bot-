@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     # Paramètres de run
     lookback_minutes: int = Field(default=30, gt=0)
     # polygon-rpc.com nécessite désormais une clé Ankr — fallback sur 1rpc.io/matic (public, sans clé)
-    polygon_rpc_url: str = Field(default="https://1rpc.io/matic")
+    polygon_rpc_url: str = Field(default="https://polygon.llamarpc.com")
 
     # PnL Tracker (optionnel — désactivé si non configuré)
     gist_id: str = Field(default="", description="ID du Gist GitHub pour le PnL tracker")

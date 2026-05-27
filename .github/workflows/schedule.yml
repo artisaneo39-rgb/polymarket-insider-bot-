@@ -28,7 +28,7 @@ jobs:
       TIMING_HOURS_BEFORE: ${{ vars.TIMING_HOURS_BEFORE || '4' }}
       BOT_MARKET_COUNT_MAX: ${{ vars.BOT_MARKET_COUNT_MAX || '200' }}
       LOOKBACK_MINUTES: ${{ vars.LOOKBACK_MINUTES || '30' }}
-      POLYGON_RPC_URL: ${{ vars.POLYGON_RPC_URL || 'https://1rpc.io/matic' }}
+      POLYGON_RPC_URL: ${{ vars.POLYGON_RPC_URL || 'https://polygon.llamarpc.com' }}
       WALLET_BLACKLIST: ${{ vars.WALLET_BLACKLIST || '' }}
       GIST_ID: ${{ secrets.GIST_ID }}
       GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
