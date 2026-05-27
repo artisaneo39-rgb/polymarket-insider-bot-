@@ -1,7 +1,7 @@
 # CLAUDE.md — Polymarket Insider Bot
 
-**Statut actuel : EN PRODUCTION — Recalibrage filtres 2026-05-10**
-**Derniere mise a jour :** 2026-05-10 (fix filtres : BOT_MARKET_COUNT_MAX 50→200, suppression whitelist marches)
+**Statut actuel : EN PRODUCTION — Diagnostic & fix 2026-05-27**
+**Derniere mise a jour :** 2026-05-27 (diagnostic 0 alertes, fix min_bet + RPC Polygon)
 
 ---
 
@@ -16,6 +16,7 @@
 | Sprint 1 | DONE | voir section ci-dessous |
 | Sprint 2 (GitHub Actions) | DONE | `.github/workflows/schedule.yml` |
 | Recalibrage filtres | DONE | session 2026-05-10 |
+| Diagnostic 0 alertes + fix | DONE | session 2026-05-27 |
 
 ---
 
@@ -266,7 +267,20 @@ La question Q1 du PRD (le endpoint `/trades` sans `user=` retourne-t-il des trad
 ### 3. Pas de python-telegram-bot
 Le PRD mentionne `python-telegram-bot` mais l'ARCHITECTURE.md a tranche : utiliser `requests` directement sur `https://api.telegram.org/bot{TOKEN}/sendMessage`. Le `requirements.txt` NE doit PAS inclure `python-telegram-bot`.
 
-### 4. Valeurs sentinelles
+### 6. Diagnostic session 2026-05-27 — 0 alertes
+
+**Cause identifiée :** Le marché "New Rihanna Album before GTA VI?" monopolise 100% des trades ≥ 200 USDC sur Polymarket en ce moment. Ce marché est correctement filtré comme "noise" (mot-clé "gta"), mais il n'y a tout simplement pas de gros trades sur les marchés politiques/crypto.
+
+**Fixes appliqués :**
+- `min_bet_usdc` : 5000 → 200 USDC (défaut config.py + workflow YAML)
+- Polygon RPC : `1rpc.io/matic` → `polygon.llamarpc.com` (1rpc.io down, causait runs de 177s)
+- Retries RPC : 3 tentatives → 1 tentative, timeout 5s → 3s
+
+**Situation actuelle :** Le bot est fonctionnel mais génère 0 alertes car les gros parieurs Polymarket sont concentrés sur le marché GTA. Le bot alertera dès qu'un trade significatif apparaîtra sur un marché politique, crypto ou réglementaire.
+
+**A surveiller :** Quand le marché GTA se résoudra (sortie GTA VI ou album Rihanna), les gros trades se redistribueront sur d'autres marchés.
+
+### 7. Valeurs sentinelles
 - `tx_count_polygon == -1` signifie "inconnu" (Polygon RPC down) -> S2 non active
 - `first_polymarket_trade_ts == -1` signifie "inconnu" -> S1 non active
 - Toutes les fonctions de `fetcher.py` retournent `[]` ou `None` en cas d'erreur (jamais d'exception remontee)
